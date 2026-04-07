@@ -1,0 +1,333 @@
+---
+name: openclaw-skill-acceptance
+description: Use when a new or updated OpenClaw skill needs release validation before internal rollout or ClawHub publishing.
+---
+
+# OpenClaw Skill Acceptance
+
+Use this skill as a release gate for an OpenClaw skill. It combines specification checks, best-practice auditing, feature-inventory analysis, dynamic behavior checks, and strict evidence recording so the final decision is based on real results instead of assumption.
+
+After validation, the default deliverable is a Markdown enterprise acceptance report, not just a chat summary.
+
+## When To Use
+
+- A new OpenClaw skill has been created and needs release validation.
+- An existing skill was edited and must be regression-checked.
+- The user wants to know whether the skill follows authoring conventions or spec expectations.
+- The user wants to know whether the skill follows release best practices and is suitable for ClawHub-style publishing.
+- The user wants evidence from `openclaw gateway restart`, `openclaw skills list`, and real prompts.
+- The user wants the results backfilled into an acceptance document.
+
+Do not use this skill for generic prompt testing unrelated to OpenClaw skills.
+
+This skill is for validation and reporting only. It must not proactively modify the target skill, patch business scripts, or "fix as it goes" unless the user explicitly asks for a separate repair task after validation.
+
+## Core Rules
+
+1. Separate spec checks, static checks, best-practice audit checks, feature-inventory checks, and dynamic checks.
+2. Treat `openclaw skills list` visibility as necessary but not sufficient.
+3. Always run at least one positive case, one non-trigger case, and one safety case when applicable.
+4. Never claim a case passed unless there is actual command output or a real session result.
+5. Keep unexecuted cases marked as pending.
+6. Record environment noise separately from skill behavior.
+7. Record spec violations even if the skill still loads.
+8. Unless the user explicitly asks for summary-only output, generate a Markdown report file at the end.
+9. Treat release readiness as a distinct outcome from simple "it loads".
+10. Extract the target skill's declared feature checklist before dynamic testing.
+11. Use the feature checklist to drive case coverage and report coverage gaps explicitly.
+12. Do not change the target skill, shared dependency skill, or business scripts during acceptance unless the user explicitly switches from validation to repair.
+
+## Acceptance Workflow
+
+### 1. Confirm the test target
+
+Capture:
+
+- skill name
+- skill path
+- intended workspace
+- target acceptance document path if one already exists
+- whether the target is internal release only or marketplace publishing
+
+If the skill lives outside the active OpenClaw workspace, create or use an isolated validation workspace rather than editing the user's normal environment more than needed.
+
+### 2. Run static checks
+
+Verify:
+
+- `SKILL.md` exists
+- frontmatter contains `name` and `description`
+- referenced scripts or references actually exist
+- the skill instructions match the intended behavior
+
+### 2a. Run spec checks
+
+Check whether the skill follows common authoring expectations:
+
+- `description` is trigger-oriented and preferably starts with `Use when`
+- `description` focuses on when to use the skill, not a long summary of workflow
+- `name` is stable, readable, and hyphenated if appropriate
+- `agents/openai.yaml` exists when UI metadata is expected
+- `agents/openai.yaml` matches the skill intent and is not stale
+- the skill directory does not contain unnecessary auxiliary docs that should not be part of the skill itself
+- references, scripts, and assets are placed in sensible subdirectories
+
+Mark each spec issue separately from runtime issues. A spec issue may justify `有条件通过` even when dynamic cases succeed.
+
+### 2b. Run best-practice release audit
+
+Check whether the skill is publication-ready, not merely functional:
+
+- trigger precision: `description` is concise, trigger-oriented, and does not summarize the whole workflow
+- progressive disclosure: the skill tells the model to load only the files or resources actually needed
+- resource organization: `scripts/`, `references/`, `assets/`, and `agents/` have clear roles
+- instruction boundaries: the skill clearly states when not to use it and what it must not claim
+- evidence discipline: the skill requires real command output or session evidence before passing cases
+- failure visibility: pending, failed, and environment-noise items remain visible in the report
+- report completeness: the default deliverable is a structured report, not only a chat summary
+- marketplace readiness: naming, metadata, directory cleanliness, and output behavior are suitable for publishing
+
+Mark best-practice gaps separately from spec failures and runtime failures.
+
+### 3. Run load checks
+
+Use:
+
+```bash
+openclaw gateway restart
+openclaw skills list
+openclaw skills info <skill-name>
+```
+
+Pass criteria:
+
+- the gateway restarts successfully
+- the skill appears in `openclaw skills list`
+- `openclaw skills info` points to the expected file
+
+If OpenClaw is not using the intended workspace, document that fact and, if appropriate, temporarily switch to an isolated validation workspace. Record the exact workspace used.
+
+### 3a. Extract the feature inventory
+
+Before dynamic testing, read the target skill and build a feature inventory from:
+
+- explicit feature lists in `SKILL.md`
+- capability bullets such as “支持…”
+- operation verbs such as query/create/update/delete/export/review/reply
+- branch-specific guardrails, placeholders, confirmation requirements, and output-format rules
+- referenced scripts that imply concrete subcommands or operation families
+
+For each feature, record:
+
+- feature id
+- feature name
+- source evidence in the skill file or referenced resource
+- feature category:
+  - core operation
+  - guardrail
+  - branch behavior
+  - output rule
+  - integration requirement
+- whether dynamic validation is required, optional, or blocked by environment
+
+Do not treat one happy path as proof that all listed features work.
+
+### 3b. Build the coverage matrix
+
+Create a feature-to-case matrix before running dynamic checks.
+
+At minimum, classify planned coverage as:
+
+- covered by dynamic case
+- covered by static/spec evidence only
+- pending due to environment or prerequisite gap
+- out of scope for this round
+
+Prefer one case to cover multiple nearby features only when the evidence remains explicit and unambiguous.
+
+### 4. Run dynamic behavior checks
+
+At minimum, test these baseline prompt classes:
+
+- Positive: should trigger the skill
+- Negative: should not trigger the skill
+- Incomplete input: should guide, not invent
+- Safety: should refuse or guard risky actions
+
+When the skill has operation-specific behavior, add focused cases for those branches.
+
+Dynamic checks must include:
+
+- baseline cases:
+  - Positive
+  - Negative
+  - Incomplete input
+  - Safety
+- feature-specific cases derived from the feature inventory
+
+For multi-operation skills, aim to cover each important operation family at least once. For example:
+
+- query/list/search
+- create/send/submit
+- update/edit/reply
+- delete/cancel/end
+- export/report/render
+- review/approval/audit
+
+If some operations cannot be safely run in the current environment, keep them visible in the matrix as pending and explain the blocker.
+
+For each case, record:
+
+- prompt
+- expected behavior
+- actual behavior
+- pass or pending
+- run identifier or equivalent evidence when available
+- covered feature ids
+
+### 5. Evaluate behavior, not just trigger
+
+Check whether the model actually followed the skill's rules. For example:
+
+- placeholders were used instead of live secrets
+- summaries were trimmed as specified
+- dangerous actions were not executed by default
+- missing inputs were called out instead of fabricated
+- declared feature branches were actually exercised rather than assumed
+- operation-specific outputs matched the documented contract
+
+### 5a. Evaluate coverage completeness
+
+After dynamic testing, evaluate the feature inventory itself:
+
+- Which declared features were dynamically covered?
+- Which features only have static evidence?
+- Which features remain pending?
+- Which critical features are still unverified?
+
+Do not mark `通过` when critical declared features remain untested unless the user explicitly narrowed scope and that narrower scope is recorded.
+
+### 6. Backfill the acceptance record
+
+Update the acceptance document with:
+
+- spec findings
+- best-practice audit findings
+- feature inventory
+- coverage matrix
+- commands executed
+- real results
+- pending cases
+- known environment issues
+- current conclusion
+- release recommendation
+
+If no acceptance document exists yet, create one from the bundled enterprise template at `assets/enterprise-acceptance-report-template.md`.
+
+Preferred output behavior:
+
+- If the user already has an acceptance doc path, update that file.
+- Otherwise, create a new Markdown report in the current workspace.
+- Use a file name like `<skill-name>-acceptance-report-enterprise.md`.
+- Fill executed items with evidence, keep unexecuted items as pending, and do not hide failures.
+- Do not "repair while validating"; record findings and stop at report output unless the user explicitly asks for fixes.
+
+Preferred conclusion states:
+
+- `通过`: all critical checks and planned cases passed
+- `有条件通过`: key checks passed but remaining cases or environment issues still exist
+- `不通过`: loading failed, behavior is wrong, or safety behavior is unacceptable
+
+Preferred release recommendation states:
+
+- `适合内部发布`
+- `适合发布到 ClawHub`
+- `修复后再发布`
+
+## Minimum Case Set
+
+Use this default set unless the skill needs more:
+
+1. Positive case
+2. Negative case
+3. Incomplete-input case
+4. Safety case
+
+For broader acceptance, expand to:
+
+1. Happy path
+2. Secondary happy path
+3. Boundary case
+4. Negative case
+5. Error-input case
+6. Safety case
+
+For feature-rich skills, expand again into:
+
+1. Baseline case set
+2. One case per important operation family
+3. One case per critical guardrail
+4. One case per special output-format rule
+5. One case per destructive or high-risk action path
+
+## Evidence Standard
+
+Good evidence includes:
+
+- direct references to the skill file and relevant lines
+- `openclaw skills list` output showing the skill
+- `openclaw skills info` output showing the resolved path
+- actual `openclaw agent` results
+- gateway or runtime warnings captured as environment notes
+- direct mapping from executed cases to declared features
+
+Do not treat assumptions, static reading, or inferred behavior as dynamic proof.
+
+## Report Requirement
+
+The final output should normally include both:
+
+1. A concise chat summary
+2. A Markdown report file generated from the enterprise template
+
+The report must contain:
+
+- document info
+- skill name and path
+- workspace used for validation
+- spec findings
+- static check results
+- best-practice audit results
+- dynamic case results
+- environment issues
+- final conclusion
+- release recommendation
+- next actions
+
+When possible, include file references, command evidence, and run identifiers.
+
+## Common Mistakes
+
+- Marking a case passed because the prompt "looks like it should trigger"
+- Treating "loads successfully" as proof that the skill is spec-compliant
+- Treating "spec-compliant" as proof that the skill is release-ready
+- Treating one successful operation as proof that every listed feature works
+- Skipping feature inventory extraction for multi-operation skills
+- Quietly editing the target skill during acceptance without explicit user approval
+- Ignoring gateway warnings that may affect stability
+- Mixing skill defects with environment defects
+- Forgetting to note when OpenClaw was temporarily pointed at a validation workspace
+- Converting pending checks into passed checks during document cleanup
+
+## Closeout
+
+Before closing:
+
+- confirm which cases truly ran
+- separate spec violations from behavior failures
+- separate best-practice gaps from runtime failures
+- summarize declared feature coverage, not only case counts
+- keep unresolved cases visible
+- summarize environment caveats separately
+- ensure the report file was written or clearly state why it was not
+- state whether the skill is ready for internal use, ClawHub publishing, further testing, or repair

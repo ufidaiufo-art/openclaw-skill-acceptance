@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Skill Acceptance"
+  short_description: "Release-gate validation for OpenClaw skills"
+  default_prompt: "Use $openclaw-skill-acceptance to run a release-gate audit for this OpenClaw skill, including spec checks, best-practice review, feature coverage, dependency checks, dynamic acceptance, and a strict enterprise Markdown acceptance report."
