@@ -2,6 +2,20 @@
 
 > 关联 skill：`<skill-path>`
 
+## 0. 执行摘要
+
+| 项目 | 内容 |
+|---|---|
+| 业务能力结论 | `<pass-or-conditional-or-fail>` |
+| 平台集成结论 | `<pass-or-conditional-or-fail>` |
+| 发布建议 | `<internal-clawhub-or-fix-first>` |
+| 动态覆盖率摘要 | `<dynamic-covered>/<feature-count>` |
+| 关键未决项 | `<top-open-items>` |
+
+```text
+<executive-summary>
+```
+
 ## 1. 文档信息
 
 | 项目 | 内容 |
@@ -89,7 +103,15 @@
 
 | Feature ID | 关联用例 | 覆盖方式 | 当前状态 | 说明 |
 |---|---|---|---|---|
-| F-01 | `<TC-01, TC-05>` | `<dynamic-or-static-or-pending>` | `<covered-partial-pending-out-of-scope>` | `<note>` |
+| F-01 | `<TC-01, TC-05>` | `<dynamic-or-static-only-or-pending-or-out-of-scope>` | `<covered-or-static-only-or-pending-or-blocked-or-out-of-scope>` | `<note>` |
+
+> 判定规则：
+>
+> - `covered`：必须有真实动态执行证据，不得仅凭代码阅读或链路推断给出。
+> - `static-only`：仅有静态/规范/脚本层证据，不能等同于动态覆盖。
+> - `pending`：本轮计划验证但未执行完成，或缺前置条件。
+> - `blocked`：本轮因环境、账号、依赖或平台问题无法验证。
+> - `out-of-scope`：明确不在本轮范围内，且该收缩范围已记录。
 
 ## 10. 动态用例结果
 
@@ -108,6 +130,7 @@
 | 已动态覆盖 | `<dynamic-covered-count>` |
 | 仅静态覆盖 | `<static-only-count>` |
 | 待补验证 | `<pending-count>` |
+| 环境阻塞 | `<blocked-count>` |
 | 超出本轮范围 | `<out-of-scope-count>` |
 
 ```text
@@ -128,13 +151,27 @@
 
 ## 14. 验收结论
 
-### 当前结论
+### 14.1 业务能力结论
 
 - [ ] 通过
 - [ ] 有条件通过
 - [ ] 不通过
 
-### 结论说明
+```text
+<business-conclusion-summary>
+```
+
+### 14.2 平台集成结论
+
+- [ ] 通过
+- [ ] 有条件通过
+- [ ] 不通过
+
+```text
+<integration-conclusion-summary>
+```
+
+### 14.3 综合结论说明
 
 ```text
 <final-conclusion-summary>

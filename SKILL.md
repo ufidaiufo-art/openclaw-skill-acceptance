@@ -28,7 +28,7 @@ This skill is for validation and reporting only. It must not proactively modify 
 2. Treat `openclaw skills list` visibility as necessary but not sufficient.
 3. Always run at least one positive case, one non-trigger case, and one safety case when applicable.
 4. Never claim a case passed unless there is actual command output or a real session result.
-5. Keep unexecuted cases marked as pending.
+5. Keep unexecuted cases marked as pending or blocked; do not upgrade them to covered in the final summary.
 6. Record environment noise separately from skill behavior.
 7. Record spec violations even if the skill still loads.
 8. Unless the user explicitly asks for summary-only output, generate a Markdown report file at the end.
@@ -36,6 +36,8 @@ This skill is for validation and reporting only. It must not proactively modify 
 10. Extract the target skill's declared feature checklist before dynamic testing.
 11. Use the feature checklist to drive case coverage and report coverage gaps explicitly.
 12. Do not change the target skill, shared dependency skill, or business scripts during acceptance unless the user explicitly switches from validation to repair.
+13. `static-only` evidence must remain distinct from real dynamic coverage in both the matrix and the conclusion.
+14. Final output must separate business capability readiness from platform or integration readiness.
 
 ## Acceptance Workflow
 
@@ -141,6 +143,7 @@ At minimum, classify planned coverage as:
 - covered by dynamic case
 - covered by static/spec evidence only
 - pending due to environment or prerequisite gap
+- blocked by environment or platform failure
 - out of scope for this round
 
 Prefer one case to cover multiple nearby features only when the evidence remains explicit and unambiguous.
@@ -203,6 +206,7 @@ After dynamic testing, evaluate the feature inventory itself:
 - Which declared features were dynamically covered?
 - Which features only have static evidence?
 - Which features remain pending?
+- Which features were blocked by environment or platform conditions?
 - Which critical features are still unverified?
 
 Do not mark `通过` when critical declared features remain untested unless the user explicitly narrowed scope and that narrower scope is recorded.
@@ -211,6 +215,7 @@ Do not mark `通过` when critical declared features remain untested unless the 
 
 Update the acceptance document with:
 
+- executive summary
 - spec findings
 - best-practice audit findings
 - feature inventory
@@ -229,8 +234,12 @@ Preferred output behavior:
 - If the user already has an acceptance doc path, update that file.
 - Otherwise, create a new Markdown report in the current workspace.
 - Use a file name like `<skill-name>-acceptance-report-enterprise.md`.
-- Fill executed items with evidence, keep unexecuted items as pending, and do not hide failures.
+- Fill executed items with evidence, keep unexecuted items as pending or blocked, and do not hide failures.
 - Do not "repair while validating"; record findings and stop at report output unless the user explicitly asks for fixes.
+- Do not mark a feature as `covered` unless dynamic evidence exists in the report.
+- Split the final verdict into:
+  - business capability conclusion
+  - platform / integration conclusion
 
 Preferred conclusion states:
 

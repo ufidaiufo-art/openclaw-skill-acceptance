@@ -14,7 +14,7 @@ Use this skill to validate a new or updated OpenClaw skill before internal rollo
 ## 市场简介 / Marketplace Summary
 
 这个 skill 用来判断一个 OpenClaw skill 是否真的具备发布条件。它检查的不只是“能不能被加载”，还会覆盖触发描述质量、元数据规范、资源组织、证据纪律、动态行为、依赖风险，以及报告完整性。最终结果会给出结构化的企业级验收报告，并明确标注 `通过`、`有条件通过` 或 `不通过`，同时附带发布建议。  
-This skill is used to determine whether an OpenClaw skill is actually ready for release. It checks more than simple loadability. It also reviews trigger quality, metadata hygiene, resource organization, evidence discipline, runtime behavior, dependency risk, and report completeness. The final result is a structured enterprise-style acceptance report with an explicit outcome of `Pass`, `Conditional Pass`, or `Fail`, plus release guidance.
+This skill is used to determine whether an OpenClaw skill is actually ready for release. It checks more than simple loadability. It also reviews trigger quality, metadata hygiene, resource organization, evidence discipline, runtime behavior, dependency risk, and report completeness. The final result is a structured enterprise-style acceptance report with explicit business and integration conclusions, plus release guidance.
 
 ## 检查范围 / What It Checks
 
@@ -44,6 +44,9 @@ The default output is an enterprise-style Markdown acceptance report, not a simp
 报告通常包含这些部分：  
 The report usually includes:
 
+- 执行摘要
+- 业务能力结论与平台集成结论
+- 覆盖矩阵与覆盖判定
 - 文档信息
 - 目标 skill 与工作区信息
 - 规范检查结果
@@ -55,6 +58,9 @@ The report usually includes:
 - 后续行动项
 
 - Document information
+- Executive summary
+- Separate business and platform/integration conclusions
+- Coverage matrix with explicit coverage states
 - Target skill and workspace context
 - Compliance check results
 - Best-practice audit results
@@ -113,4 +119,4 @@ Validate an OpenClaw skill before release with compliance checks, functional cov
 ### 完整介绍 / Full Intro
 
 `openclaw-skill-acceptance` 适合那些需要真实发布结论，而不是随意意见的 OpenClaw skill 作者。它会从规范、最佳实践、功能覆盖、grouped skill 依赖风险、可加载性和运行时行为多个维度验证 skill。它要求真实证据，保留待验证项，区分环境噪音与 skill 缺陷，并最终生成一份带发布建议的企业级 Markdown 验收报告，用于内部上线或 ClawHub 发布决策。  
-`openclaw-skill-acceptance` is for OpenClaw skill authors who need a real release decision rather than a casual opinion. It evaluates a skill across compliance, best practices, feature coverage, grouped-skill dependency risk, loadability, and runtime behavior. It requires real evidence, preserves unresolved items, separates environment noise from skill defects, and produces an enterprise-style Markdown acceptance report suitable for internal rollout or ClawHub release decisions.
+`openclaw-skill-acceptance` is for OpenClaw skill authors who need a real release decision rather than a casual opinion. It evaluates a skill across compliance, best practices, feature coverage, grouped-skill dependency risk, loadability, and runtime behavior. It requires real evidence, keeps static-only findings distinct from dynamic coverage, separates environment noise from skill defects, and produces an enterprise-style Markdown acceptance report suitable for internal rollout or ClawHub release decisions.
