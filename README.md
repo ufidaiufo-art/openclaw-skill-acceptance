@@ -1,74 +1,116 @@
-# OpenClaw Skill Acceptance
+# OpenClaw 技能验收 / OpenClaw Skill Acceptance
 
-Release-gate validation for OpenClaw skills.
+面向 OpenClaw skill 的发布前验收与放行检查。  
+Pre-release acceptance and release-gating checks for OpenClaw skills.
 
-`openclaw-skill-acceptance` is a release-gate skill for OpenClaw authors. Use it when a new or updated skill needs evidence-backed validation before internal rollout or ClawHub publishing. The default output is a strict enterprise Markdown acceptance report.
+`openclaw-skill-acceptance` 是一个用于发布把关的 OpenClaw skill。适用于新建或更新后的 skill 在内部上线或发布到 ClawHub 之前做基于证据的验收。默认输出不是聊天摘要，而是一份严格的企业级 Markdown 验收报告。  
+`openclaw-skill-acceptance` is an OpenClaw skill for release gating. It is designed for evidence-based acceptance before a new or updated skill is rolled out internally or published to ClawHub. Its default output is not a casual chat summary, but a strict enterprise-style Markdown acceptance report.
 
-## Short Description
+## 简短说明 / Short Description
 
-Use when a new or updated OpenClaw skill needs release validation before rollout or ClawHub publishing.
+适用于新建或更新后的 OpenClaw skill 在内部发布或 ClawHub 发布前进行验收验证。  
+Use this skill to validate a new or updated OpenClaw skill before internal rollout or ClawHub publication.
 
-## Marketplace Intro
+## 市场简介 / Marketplace Summary
 
-This skill helps authors decide whether an OpenClaw skill is actually ready to ship. It checks more than loadability: trigger quality, metadata hygiene, resource organization, evidence discipline, dynamic behavior, dependency risk, and report completeness. The result is a structured enterprise acceptance report with explicit pass, conditional pass, or fail conclusions and a release recommendation.
+这个 skill 用来判断一个 OpenClaw skill 是否真的具备发布条件。它检查的不只是“能不能被加载”，还会覆盖触发描述质量、元数据规范、资源组织、证据纪律、动态行为、依赖风险，以及报告完整性。最终结果会给出结构化的企业级验收报告，并明确标注 `通过`、`有条件通过` 或 `不通过`，同时附带发布建议。  
+This skill is used to determine whether an OpenClaw skill is actually ready for release. It checks more than simple loadability. It also reviews trigger quality, metadata hygiene, resource organization, evidence discipline, runtime behavior, dependency risk, and report completeness. The final result is a structured enterprise-style acceptance report with an explicit outcome of `Pass`, `Conditional Pass`, or `Fail`, plus release guidance.
 
-## What It Checks
+## 检查范围 / What It Checks
 
-- Spec compliance for `SKILL.md`, naming, description style, and metadata
-- Best-practice release audit for trigger design, progressive disclosure, resource layout, and instruction boundaries
-- Feature inventory extraction and coverage analysis
-- Load verification with `openclaw gateway restart`, `openclaw skills list`, and `openclaw skills info`
-- Dynamic prompt validation for positive, negative, incomplete-input, and safety cases
-- Dependency and conflict checks for grouped skills
-- Evidence-backed reporting with environment issues separated from skill defects
-- Release recommendation for internal rollout or ClawHub publishing
+- 检查 `SKILL.md`、命名、描述风格和元数据是否符合规范
+- 审核触发设计、渐进式加载、资源布局和指令边界等最佳实践
+- 提取功能清单并评估覆盖情况
+- 通过 `openclaw gateway restart`、`openclaw skills list`、`openclaw skills info` 做加载验证
+- 使用正向、负向、不完整输入和安全用例做动态验证
+- 检查 grouped skills 的依赖与冲突风险
+- 基于真实证据生成报告，并将环境问题与 skill 缺陷分开记录
+- 给出内部发布或 ClawHub 发布建议
 
-## Default Output
+- Validates `SKILL.md`, naming, description style, and metadata quality
+- Audits trigger design, progressive loading, resource layout, and instruction boundaries
+- Extracts the functional surface area and evaluates coverage
+- Verifies loading with `openclaw gateway restart`, `openclaw skills list`, and `openclaw skills info`
+- Runs positive, negative, incomplete-input, and safety test cases
+- Checks grouped-skill dependency and conflict risk
+- Produces a report grounded in real evidence while separating environment noise from skill defects
+- Provides a release recommendation for internal rollout or ClawHub publication
 
-The default output is an enterprise Markdown acceptance report, not just a chat summary.
+## 默认输出 / Default Output
 
-Expected sections include:
+默认输出是一份企业级 Markdown 验收报告，而不是简单的聊天回复。  
+The default output is an enterprise-style Markdown acceptance report, not a simple chat reply.
 
-- document info
-- target skill and workspace
-- spec findings
-- best-practice audit results
-- static and dynamic validation results
-- environment issues
-- final conclusion
-- release recommendation
-- next actions
+报告通常包含这些部分：  
+The report usually includes:
 
-## Best For
+- 文档信息
+- 目标 skill 与工作区信息
+- 规范检查结果
+- 最佳实践审计结果
+- 静态与动态验证结果
+- 环境问题
+- 最终结论
+- 发布建议
+- 后续行动项
 
-- validating a new skill before first release
-- regression-checking a modified skill before republishing
-- deciding whether a skill is ready for internal rollout
-- deciding whether a skill is ready for ClawHub
+- Document information
+- Target skill and workspace context
+- Compliance check results
+- Best-practice audit results
+- Static and dynamic validation results
+- Environment issues
+- Final conclusion
+- Release recommendation
+- Follow-up action items
 
-## Not For
+## 适用场景 / When To Use
 
-- generic prompt experiments unrelated to OpenClaw skills
-- ad hoc one-off chat testing without evidence capture
-- free-form code review that does not concern a skill package
-- automatic repair of the target skill during validation
+- 新 skill 首次发布前做验收
+- 已修改 skill 在重新发布前做回归检查
+- 判断 skill 是否适合内部上线
+- 判断 skill 是否适合发布到 ClawHub
 
-## Example Prompt
+- Acceptance before the first release of a new skill
+- Regression validation before re-releasing an updated skill
+- Deciding whether a skill is ready for internal rollout
+- Deciding whether a skill is ready for ClawHub publication
+
+## 不适用场景 / When Not To Use
+
+- 与 OpenClaw skill 无关的普通 prompt 试验
+- 没有证据记录的一次性聊天测试
+- 与 skill 包无关的自由式代码审查
+- 在验收过程中自动修改目标 skill
+
+- General prompt experiments unrelated to OpenClaw skills
+- One-off chat tests without evidence capture
+- Free-form code review unrelated to a skill package
+- Automatically modifying the target skill during acceptance
+
+## 示例提示词 / Example Prompt
 
 ```text
-Use $openclaw-skill-acceptance to validate this OpenClaw skill for release, run spec and best-practice checks, test positive/negative/incomplete/safety prompts, and generate an enterprise acceptance report.
+使用 $openclaw-skill-acceptance 对这个 OpenClaw skill 做发布验收，执行规范检查、最佳实践审计、正向/负向/不完整输入/安全用例测试，并生成企业级验收报告。
 ```
 
-## Listing Copy
+```text
+Use $openclaw-skill-acceptance to run release acceptance for this OpenClaw skill, including compliance checks, best-practice auditing, positive/negative/incomplete-input/safety tests, and generation of an enterprise-style acceptance report.
+```
 
-### One-line Pitch
+## 列表页文案 / Listing Copy
 
-Release-gate audit for OpenClaw skills with evidence-backed dynamic validation and enterprise reporting.
+### 一句话介绍 / One-Line Intro
 
-### Short Listing
+面向 OpenClaw skill 的发布前验收工具，提供基于证据的动态验证与企业级报告。  
+Pre-release acceptance for OpenClaw skills with evidence-based runtime validation and enterprise-style reporting.
 
-Validate an OpenClaw skill before release with spec checks, feature coverage, dynamic verification, and a structured enterprise report.
+### 短介绍 / Short Intro
 
-### Full Listing
+在发布前验证 OpenClaw skill，覆盖规范检查、功能覆盖、动态验证与结构化企业报告。  
+Validate an OpenClaw skill before release with compliance checks, functional coverage review, runtime validation, and structured enterprise reporting.
 
-`openclaw-skill-acceptance` is designed for authors who need a real release decision, not a casual opinion. It validates OpenClaw skills across specification, best-practice readiness, feature coverage, grouped-skill dependency risk, loadability, and runtime behavior. It requires actual evidence, keeps pending items visible, separates environment noise from skill defects, and produces a strict enterprise Markdown acceptance report with a release recommendation for internal rollout or ClawHub publishing.
+### 完整介绍 / Full Intro
+
+`openclaw-skill-acceptance` 适合那些需要真实发布结论，而不是随意意见的 OpenClaw skill 作者。它会从规范、最佳实践、功能覆盖、grouped skill 依赖风险、可加载性和运行时行为多个维度验证 skill。它要求真实证据，保留待验证项，区分环境噪音与 skill 缺陷，并最终生成一份带发布建议的企业级 Markdown 验收报告，用于内部上线或 ClawHub 发布决策。  
+`openclaw-skill-acceptance` is for OpenClaw skill authors who need a real release decision rather than a casual opinion. It evaluates a skill across compliance, best practices, feature coverage, grouped-skill dependency risk, loadability, and runtime behavior. It requires real evidence, preserves unresolved items, separates environment noise from skill defects, and produces an enterprise-style Markdown acceptance report suitable for internal rollout or ClawHub release decisions.
