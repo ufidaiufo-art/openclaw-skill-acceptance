@@ -85,7 +85,19 @@
 | 关键资源存在 | `<pass-or-fail>` | `<note>` |
 | 关键限制已写明 | `<pass-or-fail>` | `<note>` |
 
-## 7. 加载检查
+## 7. 敏感能力审计
+
+| 编号 | 能力类型 | 发现位置 | 与声明用途是否匹配 | 风险级别 | 说明 |
+|---|---|---|---|---|---|
+| CAP-01 | `<command-exec-or-sensitive-file-or-broad-http-or-destructive-op>` | `<file-or-script-ref>` | `<yes-partial-no>` | `<low-medium-high>` | `<note>` |
+
+> 审计提示：
+>
+> - “无恶意行为” 不等于 “低风险”。
+> - 需要单独写明命令执行、本地敏感文件访问、宽范围 HTTP 调用、批量删除/取消/结束等高权限能力。
+> - 如果实际能力明显大于 skill 对外声明，应在结论中降级处理。
+
+## 8. 加载检查
 
 | 检查项 | 结果 | 说明 |
 |---|---|---|
@@ -93,13 +105,13 @@
 | `openclaw skills list` 可见 | `<pass-or-fail>` | `<note>` |
 | `openclaw skills info` 路径正确 | `<pass-or-fail>` | `<note>` |
 
-## 8. 功能清单
+## 9. 功能清单
 
 | Feature ID | 功能名称 | 类型 | 来源证据 | 动态验证要求 | 备注 |
 |---|---|---|---|---|---|
 | F-01 | `<feature-name>` | `<core-operation-or-guardrail-or-output-rule>` | `<skill-line-or-script-ref>` | `<required-optional-blocked>` | `<note>` |
 
-## 9. 覆盖矩阵
+## 10. 覆盖矩阵
 
 | Feature ID | 关联用例 | 覆盖方式 | 当前状态 | 说明 |
 |---|---|---|---|---|
@@ -113,7 +125,7 @@
 > - `blocked`：本轮因环境、账号、依赖或平台问题无法验证。
 > - `out-of-scope`：明确不在本轮范围内，且该收缩范围已记录。
 
-## 10. 动态用例结果
+## 11. 动态用例结果
 
 | Case ID | 类型 | 输入摘要 | 预期 | 实际 | 结论 | 证据 |
 |---|---|---|---|---|---|---|
@@ -122,7 +134,7 @@
 | TC-03 | Incomplete Input | `<prompt-summary>` | `<expected>` | `<actual>` | `<pass-fail-pending>` | `<run-id-or-note>` |
 | TC-04 | Safety | `<prompt-summary>` | `<expected>` | `<actual>` | `<pass-fail-pending>` | `<run-id-or-note>` |
 
-## 11. 功能覆盖结论
+## 12. 功能覆盖结论
 
 | 项目 | 内容 |
 |---|---|
@@ -137,21 +149,21 @@
 <coverage-summary>
 ```
 
-## 12. 环境问题
+## 13. 环境问题
 
 | 编号 | 问题 | 影响 | 处理建议 |
 |---|---|---|---|
 | ENV-01 | `<environment-issue-or-none>` | `<impact>` | `<action>` |
 
-## 13. 缺陷与风险
+## 14. 缺陷与风险
 
 | 编号 | 类型 | 描述 | 严重级别 | 建议 |
 |---|---|---|---|---|
 | FINDING-01 | `<spec-or-runtime>` | `<description>` | `<severity>` | `<recommendation>` |
 
-## 14. 验收结论
+## 15. 验收结论
 
-### 14.1 业务能力结论
+### 15.1 业务能力结论
 
 - [ ] 通过
 - [ ] 有条件通过
@@ -161,7 +173,7 @@
 <business-conclusion-summary>
 ```
 
-### 14.2 平台集成结论
+### 15.2 平台集成结论
 
 - [ ] 通过
 - [ ] 有条件通过
@@ -171,13 +183,18 @@
 <integration-conclusion-summary>
 ```
 
-### 14.3 综合结论说明
+### 15.3 综合结论说明
 
 ```text
 <final-conclusion-summary>
 ```
 
-## 15. 发布建议
+## 16. 发布建议
+
+> 发布门禁提示：
+>
+> - 如果存在高风险敏感能力，但用途披露不足或能力边界过宽，不应给出无条件 `通过`。
+> - 如果风险可接受但仍需使用者显式知情，优先给出 `有条件通过` 并附带使用建议。
 
 - [ ] 适合内部发布
 - [ ] 适合发布到 ClawHub
@@ -187,13 +204,13 @@
 <release-recommendation-summary>
 ```
 
-## 16. 后续动作
+## 17. 后续动作
 
 - [ ] `<next-action-1>`
 - [ ] `<next-action-2>`
 - [ ] `<next-action-3>`
 
-## 17. 附件与证据
+## 18. 附件与证据
 
 - [ ] `<artifact-1>`
 - [ ] `<artifact-2>`

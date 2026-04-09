@@ -14,7 +14,7 @@ Use this skill to validate a new or updated OpenClaw skill before internal rollo
 ## 市场简介 / Marketplace Summary
 
 这个 skill 用来判断一个 OpenClaw skill 是否真的具备发布条件。它检查的不只是“能不能被加载”，还会覆盖触发描述质量、元数据规范、资源组织、证据纪律、动态行为、依赖风险，以及报告完整性。最终结果会给出结构化的企业级验收报告，并明确标注 `通过`、`有条件通过` 或 `不通过`，同时附带发布建议。  
-This skill is used to determine whether an OpenClaw skill is actually ready for release. It checks more than simple loadability. It also reviews trigger quality, metadata hygiene, resource organization, evidence discipline, runtime behavior, dependency risk, and report completeness. The final result is a structured enterprise-style acceptance report with explicit business and integration conclusions, plus release guidance.
+This skill is used to determine whether an OpenClaw skill is actually ready for release. It checks more than simple loadability. It also reviews trigger quality, metadata hygiene, resource organization, evidence discipline, runtime behavior, dependency risk, sensitive capabilities, and report completeness. The final result is a structured enterprise-style acceptance report with explicit business and integration conclusions, plus release guidance.
 
 ## 检查范围 / What It Checks
 
@@ -24,6 +24,8 @@ This skill is used to determine whether an OpenClaw skill is actually ready for 
 - 通过 `openclaw gateway restart`、`openclaw skills list`、`openclaw skills info` 做加载验证
 - 使用正向、负向、不完整输入和安全用例做动态验证
 - 检查 grouped skills 的依赖与冲突风险
+- 审计命令执行、本地敏感文件访问、宽范围 HTTP 调用等敏感能力
+- 检查声明能力与实际能力是否存在偏差
 - 基于真实证据生成报告，并将环境问题与 skill 缺陷分开记录
 - 给出内部发布或 ClawHub 发布建议
 
@@ -33,6 +35,8 @@ This skill is used to determine whether an OpenClaw skill is actually ready for 
 - Verifies loading with `openclaw gateway restart`, `openclaw skills list`, and `openclaw skills info`
 - Runs positive, negative, incomplete-input, and safety test cases
 - Checks grouped-skill dependency and conflict risk
+- Audits sensitive capabilities such as command execution, local sensitive-file access, and broad HTTP reach
+- Checks whether the declared capability scope matches the actual reachable power
 - Produces a report grounded in real evidence while separating environment noise from skill defects
 - Provides a release recommendation for internal rollout or ClawHub publication
 
@@ -46,6 +50,7 @@ The report usually includes:
 
 - 执行摘要
 - 业务能力结论与平台集成结论
+- 敏感能力审计与权限-用途匹配检查
 - 覆盖矩阵与覆盖判定
 - 文档信息
 - 目标 skill 与工作区信息
@@ -60,6 +65,7 @@ The report usually includes:
 - Document information
 - Executive summary
 - Separate business and platform/integration conclusions
+- Sensitive-capability audit and permission-to-purpose fit check
 - Coverage matrix with explicit coverage states
 - Target skill and workspace context
 - Compliance check results
@@ -119,4 +125,4 @@ Validate an OpenClaw skill before release with compliance checks, functional cov
 ### 完整介绍 / Full Intro
 
 `openclaw-skill-acceptance` 适合那些需要真实发布结论，而不是随意意见的 OpenClaw skill 作者。它会从规范、最佳实践、功能覆盖、grouped skill 依赖风险、可加载性和运行时行为多个维度验证 skill。它要求真实证据，保留待验证项，区分环境噪音与 skill 缺陷，并最终生成一份带发布建议的企业级 Markdown 验收报告，用于内部上线或 ClawHub 发布决策。  
-`openclaw-skill-acceptance` is for OpenClaw skill authors who need a real release decision rather than a casual opinion. It evaluates a skill across compliance, best practices, feature coverage, grouped-skill dependency risk, loadability, and runtime behavior. It requires real evidence, keeps static-only findings distinct from dynamic coverage, separates environment noise from skill defects, and produces an enterprise-style Markdown acceptance report suitable for internal rollout or ClawHub release decisions.
+`openclaw-skill-acceptance` is for OpenClaw skill authors who need a real release decision rather than a casual opinion. It evaluates a skill across compliance, best practices, feature coverage, grouped-skill dependency risk, loadability, runtime behavior, and sensitive-capability exposure. It requires real evidence, keeps static-only findings distinct from dynamic coverage, separates environment noise from skill defects, and makes permission-to-purpose mismatches visible in the final enterprise-style Markdown acceptance report.

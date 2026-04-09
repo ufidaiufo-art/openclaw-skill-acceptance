@@ -38,6 +38,7 @@ This skill is for validation and reporting only. It must not proactively modify 
 12. Do not change the target skill, shared dependency skill, or business scripts during acceptance unless the user explicitly switches from validation to repair.
 13. `static-only` evidence must remain distinct from real dynamic coverage in both the matrix and the conclusion.
 14. Final output must separate business capability readiness from platform or integration readiness.
+15. Sensitive capabilities must be audited explicitly rather than buried inside generic static findings.
 
 ## Acceptance Workflow
 
@@ -90,6 +91,27 @@ Check whether the skill is publication-ready, not merely functional:
 - marketplace readiness: naming, metadata, directory cleanliness, and output behavior are suitable for publishing
 
 Mark best-practice gaps separately from spec failures and runtime failures.
+
+### 2c. Run sensitive-capability audit
+
+Identify whether the skill or its referenced scripts possess sensitive powers beyond normal prompt-only behavior. At minimum, inspect for:
+
+- system command execution such as `subprocess`, `os.system`, shell wrappers, or script launchers
+- local sensitive file access such as browser cookies, SQLite databases, auth caches, key files, or workspace files outside the declared scope
+- broad network reach such as arbitrary URL or path-based HTTP requests, generic API clients, proxy behavior, or upload/download helpers
+- destructive or state-changing operations such as delete/cancel/end/overwrite/bulk update
+- privilege mismatch where the declared feature set is narrower than the reachable implementation surface
+
+For each sensitive capability, record:
+
+- capability type
+- where it was found
+- why it exists
+- whether that power is clearly disclosed by the skill description or instructions
+- whether the power appears proportionate to the declared use
+- whether release should remain allowed, conditional, or blocked
+
+Do not call a skill "safe" merely because no malicious code was found. If the skill has meaningful power, surface that power explicitly.
 
 ### 3. Run load checks
 
@@ -218,6 +240,7 @@ Update the acceptance document with:
 - executive summary
 - spec findings
 - best-practice audit findings
+- sensitive-capability audit findings
 - feature inventory
 - coverage matrix
 - commands executed
@@ -240,6 +263,7 @@ Preferred output behavior:
 - Split the final verdict into:
   - business capability conclusion
   - platform / integration conclusion
+- If sensitive powers exceed the declared use or lack clear disclosure, prefer `有条件通过` or `不通过` over `通过`.
 
 Preferred conclusion states:
 
