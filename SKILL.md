@@ -39,8 +39,24 @@ This skill is for validation and reporting only. It must not proactively modify 
 13. `static-only` evidence must remain distinct from real dynamic coverage in both the matrix and the conclusion.
 14. Final output must separate business capability readiness from platform or integration readiness.
 15. Sensitive capabilities must be audited explicitly rather than buried inside generic static findings.
+16. Choose the validation mode explicitly: single-skill deep acceptance or batch triage, and do not mix their conclusions.
+17. Automatically executed behavior such as hooks, dynamic injection, or load-time commands must be surfaced as first-class risk signals.
+18. Hidden or obfuscated content must be checked explicitly rather than assumed absent.
 
 ## Acceptance Workflow
+
+### 0. Choose the validation mode
+
+Decide which mode applies before reading too much:
+
+- `single-skill deep acceptance`: use for release-gating one target skill with full spec, runtime, and report output
+- `batch triage`: use for scanning multiple skills quickly, ranking risk, and deciding which ones deserve deep acceptance next
+
+Rules:
+
+- batch triage may reuse the sensitive-capability and hidden-content checks, but it must not pretend to provide the same depth as full acceptance
+- deep acceptance remains the required mode for any final release verdict such as `通过`, `有条件通过`, or `不通过`
+- batch triage should end with a shortlist: `needs deep acceptance`, `safe for now`, or `high-risk`
 
 ### 1. Confirm the test target
 
@@ -101,6 +117,9 @@ Identify whether the skill or its referenced scripts possess sensitive powers be
 - broad network reach such as arbitrary URL or path-based HTTP requests, generic API clients, proxy behavior, or upload/download helpers
 - destructive or state-changing operations such as delete/cancel/end/overwrite/bulk update
 - privilege mismatch where the declared feature set is narrower than the reachable implementation surface
+- frontmatter risk factors such as high-power `allowed-tools`, hidden invocation, lifecycle hooks, or fork/subprocess execution modes
+- load-time or trigger-time command injection such as dynamic command blocks, auto-executed shell snippets, or install-time execution
+- hidden or obfuscated content such as HTML comments with instructions, base64 payloads, zero-width characters, Unicode smuggling, or embedded safety overrides
 
 For each sensitive capability, record:
 
@@ -112,6 +131,24 @@ For each sensitive capability, record:
 - whether release should remain allowed, conditional, or blocked
 
 Do not call a skill "safe" merely because no malicious code was found. If the skill has meaningful power, surface that power explicitly.
+
+### 2d. Run auto-execution and hidden-content checks
+
+Inspect whether the skill can execute or influence behavior before the user consciously invokes it.
+
+At minimum, check:
+
+- lifecycle hooks or platform-specific auto-run fields
+- dynamic injection patterns that execute shell or tool commands during skill load
+- hidden trigger patterns intended to evade ordinary review
+- comments, encoded payloads, or invisible characters that alter instructions or override safety policy
+
+Record separately:
+
+- whether the behavior is auto-executed, user-triggered, or unclear
+- whether the behavior is documented
+- whether the behavior is necessary for the stated use
+- whether the behavior should block release
 
 ### 3. Run load checks
 
@@ -233,14 +270,32 @@ After dynamic testing, evaluate the feature inventory itself:
 
 Do not mark `通过` when critical declared features remain untested unless the user explicitly narrowed scope and that narrower scope is recorded.
 
+### 5b. Optional second-opinion review
+
+When risk classification remains ambiguous, or when the skill has meaningful sensitive power, optionally request a second-model or second-tool review.
+
+Use this branch when:
+
+- the primary audit is near a pass/fail boundary
+- static evidence suggests risky power but intent is unclear
+- the user explicitly wants cross-validation
+
+Rules:
+
+- treat the second opinion as advisory evidence, not automatic truth
+- preserve the original findings and note where the second opinion agreed or disagreed
+- never let a second opinion erase direct evidence from code or runtime behavior
+
 ### 6. Backfill the acceptance record
 
 Update the acceptance document with:
 
 - executive summary
+- risk summary card
 - spec findings
 - best-practice audit findings
 - sensitive-capability audit findings
+- auto-execution and hidden-content findings
 - feature inventory
 - coverage matrix
 - commands executed
@@ -276,6 +331,17 @@ Preferred release recommendation states:
 - `适合内部发布`
 - `适合发布到 ClawHub`
 - `修复后再发布`
+
+### Batch-triage output minimum
+
+When running batch triage instead of deep acceptance, the output must still include:
+
+- skill name
+- claimed purpose
+- source / location
+- highest observed risk level
+- whether deep acceptance is required next
+- concise reason grounded in evidence
 
 ## Minimum Case Set
 
